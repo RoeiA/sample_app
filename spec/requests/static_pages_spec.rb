@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'pry'
 
 describe "Static pages" do
 
@@ -30,6 +31,29 @@ describe "Static pages" do
         user.feed.each do |item|
           page.should have_selector("li##{item.id}", text: item.content)
         end
+      end
+
+      describe "should display how many microposts the user has" do
+        it { should have_content('micropost'.pluralize(user.feed.count)) }
+      end
+
+      describe "pagination" do
+        before(:all) { 30.times { FactoryGirl.create(:micropost, user: user, content: "Lorem ipsum") } }
+
+        it { should have_selector('div.pagination') }
+
+        it "should list each micropost" do
+          user.microposts.paginate(page: 1).each do |micropost|
+            page.should have_selector('li', text: micropost.content)
+          end
+        end
+      end
+
+      describe "other users' microposts delete links" do
+        let(:other_user) { FactoryGirl.create(:user) }
+        let!(:m_other_user) { FactoryGirl.create(:micropost, user: other_user, content: "Lorem ipsum") }
+
+        it { should_not have_link('delete', href: micropost_path(m_other_user)) }
       end
     end
   end
