@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'pry'
 
 describe "User pages" do
 
@@ -90,7 +91,7 @@ describe "User pages" do
         fill_in "Name",         with: "Example User"
         fill_in "Email",        with: "user@example.com"
         fill_in "Password",     with: "foobar"
-        fill_in "Confirmation", with: "foobar"
+        fill_in "Confirm Password", with: "foobar"
       end
 
       it "should create a user" do
@@ -108,10 +109,9 @@ describe "User pages" do
     end
   end
 
-
   describe "edit" do
     let(:user) { FactoryGirl.create(:user) }
-    before do 
+    before do
       sign_in user
       visit edit_user_path(user)
     end
